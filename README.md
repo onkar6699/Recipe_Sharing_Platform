@@ -15,6 +15,31 @@
 * Authentication: Flask JWT Extended
 * Containerization: Docker
 * Testing: Unit testing with unittest framework
+## Screenshots
+* Login:
+
+  ![Login](openapi_server/Images/Login_Image.jpg)
+* Recipe Create
+
+  
+![Recipe Create](openapi_server/Images/create_recipe.jpg)
+* Recipe GET
+
+  
+![Recipe GET](openapi_server/Images/get_recipes.jpg)
+* Recipe Update
+
+  
+![Recipe Update](openapi_server/Images/put_recipe.jpg)
+* Recipe Like
+
+  
+![Recipe Like](openapi_server/Images/recipe_like.jpg)
+* Recipe Comment
+
+  
+![Recipe comment](openapi_server/Images/comment.jpg)
+
 
 ## Developed By
  - Onkar Chavan
