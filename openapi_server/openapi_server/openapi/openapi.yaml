@@ -1,0 +1,565 @@
+openapi: 3.0.0
+info:
+  description: API for the TasteBuds recipe sharing platform.
+  title: TasteBuds API
+  version: 1.0.0
+servers:
+- url: /
+paths:
+  /login:
+    post:
+      operationId: login_post
+      requestBody:
+        $ref: '#/components/requestBodies/inline_object_5'
+        content:
+          application/json:
+            schema:
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              type: object
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_3'
+          description: Successful login, returns JWT token
+        "400":
+          description: Invalid request payload
+        "401":
+          description: Invalid credentials
+      summary: Obtain JWT token by logging in
+      x-openapi-router-controller: openapi_server.controllers.default_controller
+  /recipes:
+    get:
+      operationId: recipes_get
+      parameters:
+      - explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 1
+          type: integer
+        style: form
+      - explode: true
+        in: query
+        name: per_page
+        required: false
+        schema:
+          default: 10
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+          description: List of recipes
+      summary: Get all recipes with pagination
+      x-openapi-router-controller: openapi_server.controllers.default_controller
+    post:
+      operationId: recipes_post
+      requestBody:
+        $ref: '#/components/requestBodies/inline_object'
+        content:
+          application/json:
+            schema:
+              properties:
+                author_id:
+                  example: 123
+                  type: integer
+                title:
+                  example: Avocado Toast
+                  type: string
+                description:
+                  example: A quick and healthy breakfast or snack option made with
+                    ripe avocado and toast.
+                  type: string
+                ingredients:
+                  example:
+                  - 1 ripe avocado
+                  - 2 slices of whole grain bread
+                  - Salt and pepper to taste
+                  items:
+                    type: string
+                  type: array
+                instructions:
+                  example: |
+                    1. Toast the bread until golden brown.
+                    2. Mash avocado, season, and spread on toast.
+                  type: string
+              type: object
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recipe'
+          description: Recipe created
+      summary: Create a new recipe
+      x-openapi-router-controller: openapi_server.controllers.default_controller
+  /recipes/{recipe_id}:
+    delete:
+      operationId: recipes_recipe_id_delete
+      parameters:
+      - explode: false
+        in: path
+        name: recipe_id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "202":
+          description: Recipe deleted
+      summary: Delete a recipe
+      x-openapi-router-controller: openapi_server.controllers.default_controller
+    get:
+      operationId: recipes_recipe_id_get
+      parameters:
+      - explode: false
+        in: path
+        name: recipe_id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recipe'
+          description: Recipe details
+      summary: Fetch a recipe by ID
+      x-openapi-router-controller: openapi_server.controllers.default_controller
+    put:
+      operationId: recipes_recipe_id_put
+      parameters:
+      - explode: false
+        in: path
+        name: recipe_id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      requestBody:
+        $ref: '#/components/requestBodies/inline_object_1'
+        content:
+          application/json:
+            schema:
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                ingredients:
+                  items:
+                    type: string
+                  type: array
+                instructions:
+                  type: string
+              type: object
+        required: true
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recipe'
+          description: Recipe updated
+      summary: Update an existing recipe
+      x-openapi-router-controller: openapi_server.controllers.default_controller
+  /recipes/{recipe_id}/comments:
+    get:
+      operationId: recipes_recipe_id_comments_get
+      parameters:
+      - explode: false
+        in: path
+        name: recipe_id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/inline_response_200_2'
+                type: array
+          description: List of comments for the recipe
+        "404":
+          description: Recipe not found
+      summary: Get comments for a recipe
+      x-openapi-router-controller: openapi_server.controllers.default_controller
+    post:
+      operationId: recipes_recipe_id_comments_post
+      parameters:
+      - explode: false
+        in: path
+        name: recipe_id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      requestBody:
+        $ref: '#/components/requestBodies/inline_object_3'
+        content:
+          application/json:
+            schema:
+              properties:
+                user_id:
+                  type: integer
+                text:
+                  type: string
+              type: object
+        required: true
+      responses:
+        "201":
+          description: Comment added
+      summary: Add a comment to a recipe
+      x-openapi-router-controller: openapi_server.controllers.default_controller
+  /recipes/{recipe_id}/likes:
+    get:
+      operationId: recipes_recipe_id_likes_get
+      parameters:
+      - explode: false
+        in: path
+        name: recipe_id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/inline_response_200_1'
+                type: array
+          description: List of likes for the recipe
+        "404":
+          description: Recipe not found
+      summary: Get likes for a recipe
+      x-openapi-router-controller: openapi_server.controllers.default_controller
+    post:
+      operationId: recipes_recipe_id_likes_post
+      parameters:
+      - explode: false
+        in: path
+        name: recipe_id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      requestBody:
+        $ref: '#/components/requestBodies/inline_object_2'
+        content:
+          application/json:
+            schema:
+              properties:
+                user_id:
+                  type: integer
+              type: object
+        required: true
+      responses:
+        "201":
+          description: Recipe liked
+      summary: Like a recipe
+      x-openapi-router-controller: openapi_server.controllers.default_controller
+  /users:
+    post:
+      operationId: users_post
+      requestBody:
+        $ref: '#/components/requestBodies/inline_object_4'
+        content:
+          application/json:
+            schema:
+              properties:
+                username:
+                  example: newuser
+                  type: string
+                password:
+                  example: password
+                  type: string
+                role:
+                  enum:
+                  - admin
+                  - contributor
+                  example: contributor
+                  type: string
+              type: object
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_201'
+          description: User created
+      summary: Create a new user (admin only)
+      x-openapi-router-controller: openapi_server.controllers.default_controller
+  /users/{user_name}:
+    delete:
+      operationId: users_user_id_delete
+      parameters:
+      - explode: false
+        in: path
+        name: user_name
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "204":
+          description: User deleted
+      summary: Delete a user (admin only)
+      x-openapi-router-controller: openapi_server.controllers.default_controller
+components:
+  requestBodies:
+    inline_object_1:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_object_1'
+      required: true
+    inline_object:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_object'
+      required: true
+    inline_object_4:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_object_4'
+      required: true
+    inline_object_5:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_object_5'
+      required: true
+    inline_object_3:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_object_3'
+      required: true
+    inline_object_2:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_object_2'
+      required: true
+  schemas:
+    Recipe:
+      example:
+        instructions: |
+          1. Toast the bread until golden brown.
+          2. Mash avocado, season, and spread on toast.
+        description: A quick and healthy breakfast or snack option made with ripe
+          avocado and toast.
+        ingredients:
+        - 1 ripe avocado
+        - 2 slices of whole grain bread
+        - Salt and pepper to taste
+        created_at: 2024-06-01T12:00:00Z
+        id: 1
+        author_id: 123
+        title: Avocado Toast
+      properties:
+        id:
+          example: 1
+          type: integer
+        author_id:
+          example: 123
+          type: integer
+        title:
+          example: Avocado Toast
+          type: string
+        description:
+          example: A quick and healthy breakfast or snack option made with ripe avocado
+            and toast.
+          type: string
+        ingredients:
+          example:
+          - 1 ripe avocado
+          - 2 slices of whole grain bread
+          - Salt and pepper to taste
+          items:
+            type: string
+          type: array
+        instructions:
+          example: |
+            1. Toast the bread until golden brown.
+            2. Mash avocado, season, and spread on toast.
+          type: string
+        created_at:
+          example: 2024-06-01T12:00:00Z
+          format: date-time
+          type: string
+      type: object
+    inline_response_200:
+      example:
+        recipes:
+        - instructions: |
+            1. Toast the bread until golden brown.
+            2. Mash avocado, season, and spread on toast.
+          description: A quick and healthy breakfast or snack option made with ripe
+            avocado and toast.
+          ingredients:
+          - 1 ripe avocado
+          - 2 slices of whole grain bread
+          - Salt and pepper to taste
+          created_at: 2024-06-01T12:00:00Z
+          id: 1
+          author_id: 123
+          title: Avocado Toast
+        - instructions: |
+            1. Toast the bread until golden brown.
+            2. Mash avocado, season, and spread on toast.
+          description: A quick and healthy breakfast or snack option made with ripe
+            avocado and toast.
+          ingredients:
+          - 1 ripe avocado
+          - 2 slices of whole grain bread
+          - Salt and pepper to taste
+          created_at: 2024-06-01T12:00:00Z
+          id: 1
+          author_id: 123
+          title: Avocado Toast
+        total: 0
+        pages: 6
+        current_page: 1
+      properties:
+        recipes:
+          items:
+            $ref: '#/components/schemas/Recipe'
+          type: array
+        total:
+          type: integer
+        pages:
+          type: integer
+        current_page:
+          type: integer
+    inline_object:
+      properties:
+        author_id:
+          example: 123
+          type: integer
+        title:
+          example: Avocado Toast
+          type: string
+        description:
+          example: A quick and healthy breakfast or snack option made with ripe avocado
+            and toast.
+          type: string
+        ingredients:
+          example:
+          - 1 ripe avocado
+          - 2 slices of whole grain bread
+          - Salt and pepper to taste
+          items:
+            type: string
+          type: array
+        instructions:
+          example: |
+            1. Toast the bread until golden brown.
+            2. Mash avocado, season, and spread on toast.
+          type: string
+      type: object
+    inline_object_1:
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        ingredients:
+          items:
+            type: string
+          type: array
+        instructions:
+          type: string
+      type: object
+    inline_object_2:
+      properties:
+        user_id:
+          type: integer
+      type: object
+    inline_object_3:
+      properties:
+        user_id:
+          type: integer
+        text:
+          type: string
+      type: object
+    inline_object_4:
+      properties:
+        username:
+          example: newuser
+          type: string
+        password:
+          example: password
+          type: string
+        role:
+          enum:
+          - admin
+          - contributor
+          example: contributor
+          type: string
+      type: object
+    inline_object_5:
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      type: object
+    inline_response_201:
+      example:
+        role: role
+        id: 0
+        username: username
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        role:
+          type: string
+    inline_response_200_1:
+      example:
+        user_id: 0
+      properties:
+        user_id:
+          type: integer
+    inline_response_200_2:
+      example:
+        user_id: 6
+        text: text
+        comment_id: 0
+      properties:
+        comment_id:
+          type: integer
+        user_id:
+          type: integer
+        text:
+          type: string
+    inline_response_200_3:
+      example:
+        access_token: access_token
+      properties:
+        access_token:
+          type: string

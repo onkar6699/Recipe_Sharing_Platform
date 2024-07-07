@@ -1,0 +1,27 @@
+docker-compose build --no-cache
+
+docker-compose up
+
+
+DB Connection and Checking 
+# psql -h localhost -U testuser -d recipe_db
+psql (13.15 (Debian 13.15-1.pgdg120+1))
+Type "help" for help.
+
+recipe_db=# SELECT * from "users";
+ERROR:  relation "users" does not exist
+LINE 1: SELECT * from "users";
+                      ^
+recipe_db=# SELECT * from "user";
+ id | username | password_hash | role  
+----+----------+---------------+-------
+  1 | john_doe | password123   | admin
+
+
+docker-compose build --no-cache
+
+INSERT INTO users (username, password_hash, role)
+VALUES ('onkar', '123', 'operator');
+
+10 | test1  
+ 11 | test2

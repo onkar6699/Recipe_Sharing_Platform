@@ -1,0 +1,14 @@
+connexion[swagger-ui]
+PyYAML==6.0.1; python_version >= "3.5" and python_version < "4"
+werkzeug
+swagger-ui-bundle 
+python_dateutil
+setuptools 
+Flask==2.2.3
+connexion==2.14.2
+gunicorn
+jinja2
+itsdangerous
+psycopg2-binary
+Flask-SQLAlchemy
+flask_jwt_extended 

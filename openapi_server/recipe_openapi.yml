@@ -1,0 +1,265 @@
+openapi: 3.0.0
+info:
+  title: TasteBuds API
+  description: API for the TasteBuds recipe sharing platform.
+  version: 1.0.0
+
+paths:
+  /recipes:
+    post:
+      summary: Create a new recipe
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                author_id:
+                  type: integer
+                  example: 123
+                title:
+                  type: string
+                  example: Avocado Toast
+                description:
+                  type: string
+                  example: A quick and healthy breakfast or snack option made with ripe avocado and toast.
+                ingredients:
+                  type: array
+                  items:
+                    type: string
+                  example: 
+                    - 1 ripe avocado
+                    - 2 slices of whole grain bread
+                    - Salt and pepper to taste
+                instructions:
+                  type: string
+                  example: |
+                    1. Toast the bread until golden brown.
+                    2. Mash avocado, season, and spread on toast.
+      responses:
+        201:
+          description: Recipe created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recipe'
+    get:
+      summary: Get all recipes with pagination
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        200:
+          description: List of recipes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  recipes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Recipe'
+                  total:
+                    type: integer
+                  pages:
+                    type: integer
+                  current_page:
+                    type: integer
+  /recipes/{recipe_id}:
+    get:
+      summary: Fetch a recipe by ID
+      parameters:
+        - name: recipe_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Recipe details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recipe'
+    put:
+      summary: Update an existing recipe
+      parameters:
+        - name: recipe_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                ingredients:
+                  type: array
+                  items:
+                    type: string
+                instructions:
+                  type: string
+      responses:
+        202:
+          description: Recipe updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recipe'
+    delete:
+      summary: Delete a recipe
+      parameters:
+        - name: recipe_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        202:
+          description: Recipe deleted
+
+  /recipes/{recipe_id}/likes:
+    post:
+      summary: Like a recipe
+      parameters:
+        - name: recipe_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+      responses:
+        201:
+          description: Recipe liked
+
+  /recipes/{recipe_id}/comments:
+    post:
+      summary: Add a comment to a recipe
+      parameters:
+        - name: recipe_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                text:
+                  type: string
+      responses:
+        201:
+          description: Comment added
+
+  /users:
+    post:
+      summary: Create a new user (admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: newuser
+                password:
+                  type: string
+                  example: password
+                role:
+                  type: string
+                  enum: [admin, contributor]
+                  example: contributor
+      responses:
+        201:
+          description: User created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  username:
+                    type: string
+                  role:
+                    type: string
+
+  /users/{user_id}:
+    delete:
+      summary: Delete a user (admin only)
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        202:
+          description: User deleted
+
+components:
+  schemas:
+    Recipe:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        author_id:
+          type: integer
+          example: 123
+        title:
+          type: string
+          example: Avocado Toast
+        description:
+          type: string
+          example: A quick and healthy breakfast or snack option made with ripe avocado and toast.
+        ingredients:
+          type: array
+          items:
+            type: string
+          example: 
+            - 1 ripe avocado
+            - 2 slices of whole grain bread
+            - Salt and pepper to taste
+        instructions:
+          type: string
+          example: |
+            1. Toast the bread until golden brown.
+            2. Mash avocado, season, and spread on toast.
+        created_at:
+          type: string
+          format: date-time
+          example: 2024-06-01T12:00:00Z
